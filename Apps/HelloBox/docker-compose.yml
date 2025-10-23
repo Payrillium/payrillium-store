@@ -8,4 +8,5 @@ services:
     labels:
       name: "HelloBox"
       description: "Simple Nginx test app for Payrillium Store"
+      icon: "./icon.png"
       category: "Utilities"
