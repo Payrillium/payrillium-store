@@ -1,0 +1,13 @@
+services:
+  payrillium-panel:
+    image: nginx:alpine
+    container_name: payrillium-panel
+    ports:
+      - "8338:80"
+    environment:
+      - TZ=America/New_York
+    restart: unless-stopped
+    labels:
+      name: "Payrillium Panel"
+      description: "Frontend placeholder for PayOS testing"
+      category: "Payrillium"
