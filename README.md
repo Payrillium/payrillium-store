@@ -1,352 +1,373 @@
 # Payrillium Store
-# Payrillium Store
 
-This is the official Payrillium applications store for CasaOS/PayOS. It provides a curated collection of applications designed specifically for the Payrillium ecosystem and PayOS platform.
+Official Payrillium applications store for CasaOS - A comprehensive collection of applications designed for the PayOS ecosystem.
 
-## 📦 Applications Included
+## 📋 Table of Contents
 
-### HelloBox
+- [Overview](#overview)
+- [Installation](#installation)
+- [Available Applications](#available-applications)
+- [Management Commands](#management-commands)
+- [Development Guide](#development-guide)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 
-- **Description**: Simple Nginx test application for Payrillium ecosystem
-- **Category**: Utilities
-- **Port**: 8080
-- **Purpose**: Testing and demonstration of Payrillium app integration
+## 🌟 Overview
 
-### PayrilliumPanel
+Payrillium Store is a third-party application store for CasaOS that provides a curated collection of applications specifically designed for the PayOS ecosystem. This store includes utilities, development tools, and custom applications that enhance the CasaOS experience.
 
-- **Description**: Frontend placeholder for PayOS testing and development
-- **Category**: Payrillium
-- **Port**: 8338
-- **Purpose**: Development environment for PayOS frontend components
+### Features
+
+- 🚀 **Easy Installation**: One-click app installation through CasaOS UI
+- 🔧 **Development Tools**: Essential utilities for PayOS development
+- 🌐 **Multi-language Support**: Applications with English and Spanish support
+- 📱 **Responsive Design**: Optimized for various device architectures (amd64, arm64)
+- 🔄 **Auto-updates**: Automatic synchronization with GitHub repository
 
 ## 🚀 Installation
 
-### Method 1: Add to CasaOS App Store Sources
+### Prerequisites
 
-1. Open CasaOS/PayOS web interface
-2. Go to **App Store** → **Settings** → **Add Source**
-3. Enter the following URL:
+- CasaOS installed and running
+- `casaos-cli` command-line tool
+- Internet connection for downloading applications
+
+### Add Payrillium Store to CasaOS
+
+1. **Using CasaOS CLI (Recommended)**:
+
+   ```bash
+   casaos-cli app-management register app-store "https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip"
    ```
-   https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip
+
+2. **Using CasaOS Web Interface**:
+   - Open CasaOS web interface
+   - Navigate to App Store settings
+   - Click "Add Source"
+   - Enter: `https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip`
+   - Click "Add"
+
+### Verify Installation
+
+```bash
+# List all registered app stores
+casaos-cli app-management list app-store
+
+# You should see Payrillium Store listed
+```
+
+## 📱 Available Applications
+
+### HelloBox
+
+- **Category**: Payrillium
+- **Description**: Simple Nginx test application for Payrillium ecosystem
+- **Port**: 8080
+- **Purpose**: Testing and development environment
+
+### Payrillium Panel
+
+- **Category**: Utilities
+- **Description**: Frontend placeholder for PayOS testing and development
+- **Port**: 8339
+- **Purpose**: PayOS frontend testing environment
+- **Features**: Multi-language support (English/Spanish)
+
+## 🛠️ Management Commands
+
+### View Logs
+
+```bash
+# Monitor CasaOS app management logs
+sudo tail -f /var/log/casaos/app-management.log
+
+# Filter for Payrillium Store specific logs
+sudo tail -f /var/log/casaos/app-management.log | grep -i payrillium
+
+# View recent errors
+sudo tail -n 100 /var/log/casaos/app-management.log | grep -i error
+```
+
+### Restart CasaOS
+
+```bash
+# Restart CasaOS service
+sudo systemctl restart casaos
+
+# Check CasaOS status
+sudo systemctl status casaos
+
+# View CasaOS logs
+sudo journalctl -u casaos -f
+```
+
+### Manage App Store
+
+```bash
+# List all app stores
+casaos-cli app-management list app-store
+
+# Remove Payrillium Store
+casaos-cli app-management unregister app-store <store-id>
+
+# Re-add Payrillium Store
+casaos-cli app-management register app-store "https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip"
+
+# Force update store (clear cache and re-register)
+sudo rm -rf /var/lib/casaos/appstore/github.com/*payrillium*
+casaos-cli app-management register app-store "https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip"
+```
+
+### Application Management
+
+```bash
+# List installed applications
+casaos-cli app-management list apps
+
+# Install an application
+casaos-cli app-management install app <app-name>
+
+# Uninstall an application
+casaos-cli app-management uninstall app <app-name>
+
+# Check application status
+casaos-cli app-management status app <app-name>
+```
+
+## 🔧 Development Guide
+
+### Creating a New Application
+
+1. **Create Application Directory**:
+
+   ```bash
+   mkdir Apps/YourAppName
+   cd Apps/YourAppName
    ```
-4. Click **Add** and wait for the store to be indexed
-5. Navigate to **App Store** and select **Payrillium** from the author filter
 
-### Method 2: Manual Installation
+2. **Create docker-compose.yml**:
 
-1. Download the latest release from [GitHub](https://github.com/Payrillium/payrillium-store)
-2. Extract the ZIP file
-3. Follow CasaOS documentation for manual store integration
+   ```yaml
+   name: your-app-name
+   services:
+     your-app-name:
+       image: your-image:tag
+       container_name: your-app-name
+       ports:
+         - target: 80
+           published: "8080"
+           protocol: tcp
+       restart: unless-stopped
+       volumes:
+         - type: bind
+           source: /DATA/AppData/$AppID
+           target: /app/data
+       x-casaos:
+         ports:
+           - container: "80"
+             description:
+               en_us: "Web interface port"
+         volumes:
+           - container: /app/data
+             description:
+               en_us: "Application data directory"
 
-## 🛠️ Development
+   x-casaos:
+     architectures:
+       - amd64
+       - arm64
+     main: your-app-name
+     author: Payrillium
+     category: Utilities
+     description:
+       en_us: "Your application description"
+       es_es: "Descripción de tu aplicación"
+     icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/YourAppName/icon.png
+     thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/YourAppName/icon.png
+     tagline:
+       en_us: "Your application tagline"
+       es_es: "Eslogan de tu aplicación"
+     title:
+       en_us: "Your App Name"
+       es_es: "Nombre de tu App"
+     index: /
+     scheme: http
+     port_map: "8080"
+   ```
 
-This store is actively maintained by the Payrillium team. For development, testing, or contributing:
+3. **Add Application Icon**:
 
-- **Repository**: [GitHub - Payrillium Store](https://github.com/Payrillium/payrillium-store)
-- **Issues**: Report bugs or request features via GitHub Issues
-- **Documentation**: Check our [Wiki](https://github.com/Payrillium/payrillium-store/wiki)
+   - Create `icon.png` (recommended: 512x512px)
+   - Place in `Apps/YourAppName/icon.png`
 
-## 📋 Requirements
+4. **Update category-list.json** (if needed):
 
-- CasaOS 0.4.0 or higher
-- Docker and Docker Compose
-- Internet connection for initial app downloads
+   ```json
+   [
+     {
+       "name": "All",
+       "font": "apps",
+       "description": "All Apps"
+     },
+     {
+       "name": "Utilities",
+       "font": "toolbox-outline",
+       "description": "Utilities Apps"
+     },
+     {
+       "name": "Payrillium",
+       "font": "star",
+       "description": "Payrillium Apps"
+     },
+     {
+       "name": "YourCategory",
+       "font": "your-icon",
+       "description": "Your Category Description"
+     }
+   ]
+   ```
 
-## 🔧 Configuration
+5. **Create recommend-list.json** (optional):
+   ```json
+   [
+     {
+       "appid": "your-app-name"
+     }
+   ]
+   ```
 
-Each application includes:
+### Testing Your Application
 
-- Docker Compose configuration
-- Proper labels for CasaOS integration
-- Volume mappings for data persistence
-- Environment variables for customization
+1. **Commit and Push Changes**:
+
+   ```bash
+   git add .
+   git commit -m "Add YourAppName application"
+   git push origin main
+   ```
+
+2. **Force Update Store**:
+
+   ```bash
+   casaos-cli app-management unregister app-store <payrillium-store-id>
+   casaos-cli app-management register app-store "https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip"
+   ```
+
+3. **Verify Installation**:
+   - Check CasaOS web interface
+   - Look for your application in the App Store
+   - Test installation and functionality
+
+### Development Workflow
+
+1. **Make Changes**: Modify your application files
+2. **Test Locally**: Verify docker-compose.yml syntax
+3. **Commit Changes**: Push to GitHub
+4. **Update Store**: Re-register the store in CasaOS
+5. **Verify**: Check that changes appear in CasaOS
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+#### Store Not Loading
+
+```bash
+# Check if store is registered
+casaos-cli app-management list app-store
+
+# Check logs for errors
+sudo tail -f /var/log/casaos/app-management.log | grep -i error
+
+# Force re-registration
+casaos-cli app-management unregister app-store <store-id>
+casaos-cli app-management register app-store "https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip"
+```
+
+#### Applications Not Appearing
+
+```bash
+# Check store root directory
+sudo find /var/lib/casaos/appstore -name "*payrillium*" -type d
+
+# Verify docker-compose.yml syntax
+docker-compose -f Apps/YourApp/docker-compose.yml config
+
+# Check for missing files
+ls -la Apps/YourApp/
+```
+
+#### Port Conflicts
+
+- Ensure `port_map` in docker-compose.yml matches the actual port
+- Check that ports are not already in use
+- Verify port mapping format: `"8080"` (with quotes)
+
+#### Extension Errors
+
+- Ensure `x-casaos` extension is present at both service and root levels
+- Verify all required fields are present in `x-casaos` section
+- Check YAML syntax and indentation
+
+### Debug Commands
+
+```bash
+# Check CasaOS service status
+sudo systemctl status casaos
+
+# View detailed logs
+sudo journalctl -u casaos -f
+
+# Check app store directory
+sudo ls -la /var/lib/casaos/appstore/
+
+# Verify downloaded files
+sudo find /var/lib/casaos/appstore -name "*.yml" -exec head -20 {} \;
+```
+
+## 🤝 Contributing
+
+We welcome contributions to the Payrillium Store! Here's how you can help:
+
+### How to Contribute
+
+1. **Fork the Repository**: Create your own fork of this repository
+2. **Create a Branch**: `git checkout -b feature/your-feature-name`
+3. **Make Changes**: Add your application or improvements
+4. **Test Thoroughly**: Ensure your changes work correctly
+5. **Submit Pull Request**: Create a PR with detailed description
+
+### Guidelines
+
+- Follow the existing application structure
+- Include proper documentation
+- Test on multiple architectures (amd64, arm64)
+- Provide clear commit messages
+- Update this README if adding new features
+
+### Application Requirements
+
+- Must include valid `docker-compose.yml` with `x-casaos` extensions
+- Provide appropriate icons (512x512px PNG)
+- Include multi-language support when possible
+- Follow CasaOS naming conventions
+- Ensure applications are stable and secure
+
+## 📞 Support
+
+- **Issues**: Report bugs and request features via GitHub Issues
+- **Discussions**: Join community discussions in GitHub Discussions
+- **Documentation**: Check CasaOS documentation for advanced topics
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to:
-
-- Add new applications
-- Improve existing configurations
-- Report issues
-- Submit pull requests
-
-## 📞 Support
-
-- **Email**: support@payrillium.com
-- **Discord**: [Payrillium Community](https://discord.gg/payrillium)
-- **GitHub**: [Issues](https://github.com/Payrillium/payrillium-store/issues)
-
----
-
-# 🏪 How to Create Your Own App Store for PayOS
-
-This guide will walk you through creating your own application store that will appear in PayOS/CasaOS, even if you have no technical experience.
-
-## 📋 Prerequisites
-
-- A GitHub account (free)
-- Basic understanding of file organization
-- Docker knowledge (optional, but helpful)
-
-## 🎯 Step-by-Step Guide
-
-### Step 1: Create a GitHub Repository
-
-1. Go to [GitHub.com](https://github.com) and sign in
-2. Click the **"+"** button → **"New repository"**
-3. Name your repository: `yourname-appstore` (e.g., `john-appstore`)
-4. Make it **Public** (required for CasaOS to access it)
-5. Check **"Add a README file"**
-6. Click **"Create repository"**
-
-### Step 2: Create the Store Structure
-
-Your repository should have this structure:
-
-```
-yourname-appstore/
-├── metadata.json              # Store information
-├── category-list.json         # Available categories
-├── README.md                  # Documentation
-└── Apps/
-    ├── MyApp1/
-    │   ├── docker-compose.yml
-    │   ├── metadata.json
-    │   └── icon.png
-    └── MyApp2/
-        ├── docker-compose.yml
-        ├── metadata.json
-        └── icon.png
-```
-
-### Step 3: Create Store Metadata
-
-Create `metadata.json` in your repository root:
-
-```json
-{
-  "name": "Your Name Store",
-  "description": "Your custom application store for PayOS",
-  "version": "1.0.0",
-  "author": "Your Name",
-  "developer": "Your Name Team",
-  "homepage": "https://github.com/yourusername/yourname-appstore",
-  "repository": "https://github.com/yourusername/yourname-appstore",
-  "license": "MIT",
-  "maintainer": "Your Name <your.email@example.com>",
-  "categories": ["Utilities", "Media", "Development"],
-  "tags": ["custom", "personal", "utilities"],
-  "screenshots": [],
-  "icon": "https://raw.githubusercontent.com/yourusername/yourname-appstore/main/icon.png",
-  "created_at": "2024-01-01T00:00:00Z",
-  "updated_at": "2024-01-01T00:00:00Z"
-}
-```
-
-### Step 4: Create Category List
-
-Create `category-list.json`:
-
-```json
-{
-  "categories": [
-    { "name": "All", "title": "All" },
-    { "name": "Utilities", "title": "Utilities" },
-    { "name": "Media", "title": "Media" },
-    { "name": "Development", "title": "Development" },
-    { "name": "YourName", "title": "Your Name" }
-  ]
-}
-```
-
-### Step 5: Add Your First Application
-
-#### 5.1 Create App Directory
-
-Create a folder called `Apps/MyFirstApp/` in your repository.
-
-#### 5.2 Create Docker Compose File
-
-Create `Apps/MyFirstApp/docker-compose.yml`:
-
-```yaml
-services:
-  myfirstapp:
-    image: nginx:alpine
-    container_name: myfirstapp
-    ports:
-      - "8080:80"
-    restart: unless-stopped
-    labels:
-      name: "My First App"
-      description: "A simple test application"
-      icon: "./icon.png"
-      category: "Utilities"
-      tagline: "Test application for my store"
-      thumbnail: "./icon.png"
-      author: "YourName"
-      developer: "Your Name Team"
-      architectures: "amd64,arm64"
-      main_app: "myfirstapp"
-      port_map: "8080"
-      scheme: "http"
-      index: "/"
-      hostname: "myfirstapp"
-      volumes:
-        - "/DATA/AppData/MyFirstApp:/usr/share/nginx/html"
-```
-
-#### 5.3 Create App Metadata
-
-Create `Apps/MyFirstApp/metadata.json`:
-
-```json
-{
-  "name": "My First App",
-  "author": "YourName",
-  "description": {
-    "en_us": "A simple test application for my custom store",
-    "es_es": "Una aplicación de prueba simple para mi tienda personalizada"
-  },
-  "category": "Utilities",
-  "architecture": ["amd64", "arm64"],
-  "ports": [
-    {
-      "container": 80,
-      "host": 8080,
-      "description": "Web interface port"
-    }
-  ],
-  "volumes": [
-    {
-      "container": "/usr/share/nginx/html",
-      "host": "/DATA/AppData/MyFirstApp",
-      "description": "Web content directory"
-    }
-  ],
-  "restart": "unless-stopped"
-}
-```
-
-#### 5.4 Add App Icon
-
-1. Find a 512x512 PNG icon for your app
-2. Save it as `Apps/MyFirstApp/icon.png`
-3. Upload it to your repository
-
-### Step 6: Commit and Push
-
-1. In GitHub, click **"Add file"** → **"Upload files"**
-2. Upload all your files
-3. Write a commit message: `"Initial store setup"`
-4. Click **"Commit changes"**
-
-### Step 7: Test Your Store
-
-1. Open your PayOS/CasaOS interface
-2. Go to **App Store** → **Settings** → **Add Source**
-3. Enter your store URL:
-   ```
-   https://github.com/yourusername/yourname-appstore/archive/refs/heads/main.zip
-   ```
-4. Click **Add**
-5. Wait for indexing (may take a few minutes)
-6. Go to **App Store** and look for **"YourName"** in the author filter
-
-## 🎨 Customization Tips
-
-### Adding More Apps
-
-- Create new folders in `Apps/` for each application
-- Follow the same structure: `docker-compose.yml`, `metadata.json`, `icon.png`
-- Make sure each app has a unique port number
-
-### Finding App Icons
-
-- Use [Dashboard Icons](https://github.com/walkxcode/dashboard-icons) for popular apps
-- Create custom icons using tools like GIMP or Canva
-- Keep icons at 512x512 pixels for best quality
-
-### Popular Docker Images
-
-- **Web Apps**: `nginx:alpine`, `apache:alpine`
-- **Databases**: `mysql:latest`, `postgres:alpine`
-- **Media**: `plex:latest`, `jellyfin/jellyfin:latest`
-- **Development**: `node:alpine`, `python:alpine`
-
-## 🔧 Troubleshooting
-
-### Store Not Appearing
-
-- Check that your repository is **public**
-- Verify the ZIP URL is correct
-- Wait 5-10 minutes for indexing
-- Check CasaOS logs for errors
-
-### Apps Not Installing
-
-- Verify Docker Compose syntax
-- Check that ports are not already in use
-- Ensure Docker images exist and are accessible
-
-### Common Errors
-
-- **"Store already exists"**: Delete the old store first
-- **"Invalid format"**: Check JSON syntax in metadata files
-- **"App not found"**: Verify file structure matches requirements
-
-## 📚 Advanced Features
-
-### Multi-Language Support
-
-Add translations to your `metadata.json`:
-
-```json
-{
-  "description": {
-    "en_us": "English description",
-    "es_es": "Descripción en español",
-    "fr_fr": "Description en français"
-  }
-}
-```
-
-### Custom Categories
-
-Add your own categories to `category-list.json`:
-
-```json
-{
-  "categories": [
-    { "name": "All", "title": "All" },
-    { "name": "MyCategory", "title": "My Custom Category" }
-  ]
-}
-```
-
-### Environment Variables
-
-Add environment variables to your Docker Compose:
-
-```yaml
-environment:
-  - MY_VAR=value
-  - ANOTHER_VAR=another_value
-```
-
-## 🎉 Congratulations!
-
-You've successfully created your own application store for PayOS! Your store will now appear in the author filter, and users can install your applications just like any other store.
-
-## 📞 Need Help?
-
-- **GitHub Issues**: Create an issue in this repository
-- **Payrillium Discord**: Join our community for support
-- **Documentation**: Check CasaOS official documentation
+## 🙏 Acknowledgments
+
+- CasaOS team for the excellent platform
+- Community contributors for their valuable input
+- Docker team for containerization technology
 
 ---
 
