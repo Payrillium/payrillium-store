@@ -22,7 +22,7 @@ x-casaos:
   architectures: [amd64, arm64]
   main: hellobox
   author: Payrillium
-  category: Utilities
+  category: Payrillium
   title:
     en_us: HelloBox
   description:
