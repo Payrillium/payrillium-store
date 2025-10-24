@@ -9,5 +9,18 @@ services:
     restart: unless-stopped
     labels:
       name: "Payrillium Panel"
-      description: "Frontend placeholder for PayOS testing"
+      description: "Frontend placeholder for PayOS testing and development"
+      icon: "./icon.png"
       category: "Payrillium"
+      tagline: "PayOS frontend testing environment"
+      thumbnail: "./icon.png"
+      author: "Payrillium"
+      developer: "Payrillium Team"
+      architectures: "amd64,arm64"
+      main_app: "payrillium-panel"
+      port_map: "8338"
+      scheme: "http"
+      index: "/"
+      hostname: "payrillium-panel"
+      volumes:
+        - "/DATA/AppData/PayrilliumPanel:/usr/share/nginx/html"
