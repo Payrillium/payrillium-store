@@ -1,6 +1,6 @@
-
 {
   "categories": [
+    { "name": "All", "title": "All" },
     { "name": "Utilities", "title": "Utilities" },
     { "name": "Payrillium", "title": "Payrillium" }
   ]
