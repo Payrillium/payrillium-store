@@ -1,7 +1,17 @@
-{
-  "categories": [
-    { "name": "All", "title": "All" },
-    { "name": "Utilities", "title": "Utilities" },
-    { "name": "Payrillium", "title": "Payrillium" }
-  ]
-}
+[
+  {
+    "name": "All",
+    "font": "apps",
+    "description": "All Apps"
+  },
+  {
+    "name": "Utilities",
+    "font": "toolbox-outline",
+    "description": "Utilities Apps"
+  },
+  {
+    "name": "Payrillium",
+    "font": "star",
+    "description": "Payrillium Apps"
+  }
+]
