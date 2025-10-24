@@ -1,12 +1,8 @@
-name: payrillium-panel
 services:
   payrillium-panel:
     image: nginx:alpine
-    container_name: payrillium-panel
     ports:
-      - target: 80
-        published: "8338"
-        protocol: tcp
+      - "8338:80"
     environment:
       - TZ=America/New_York
     restart: unless-stopped
@@ -23,23 +19,23 @@ services:
         - container: /usr/share/nginx/html
           description:
             en_us: "Web content directory"
+
 x-casaos:
-  architectures:
-    - amd64
-    - arm64
+  architectures: [amd64, arm64]
   main: payrillium-panel
   author: Payrillium
   category: Payrillium
+  title:
+    en_us: Payrillium Panel
+    es_es: Panel Payrillium
   description:
     en_us: Frontend placeholder for PayOS testing and development
     es_es: Frontend placeholder para pruebas y desarrollo de PayOS
   icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/PayrilliumPanel/icon.png
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/PayrilliumPanel/icon.png
   tagline:
     en_us: PayOS frontend testing environment
     es_es: Entorno de pruebas frontend para PayOS
-  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/PayrilliumPanel/icon.png
-  title:
-    en_us: Payrillium Panel
-    es_es: Panel Payrillium
   index: /
+  scheme: http
   port_map: "8338"
