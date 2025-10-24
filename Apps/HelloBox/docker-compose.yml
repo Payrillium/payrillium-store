@@ -22,3 +22,14 @@ services:
       hostname: "hellobox"
       volumes:
         - "/DATA/AppData/HelloBox:/usr/share/nginx/html"
+
+x-casaos:
+  hostname: hellobox
+  scheme: http
+  index: /
+  port_map: "8080"
+  author: Payrillium
+  category: Utilities
+  icon: "./icon.png"
+  title:
+    custom: "HelloBox"
