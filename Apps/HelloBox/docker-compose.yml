@@ -1,35 +1,35 @@
+name: hellobox
 services:
   hellobox:
     image: nginx:alpine
     container_name: hellobox
     ports:
-      - "8080:80"
+      - target: 80
+        published: "8080"
+        protocol: tcp
     restart: unless-stopped
-    labels:
-      name: "HelloBox"
-      description: "Simple Nginx test app for Payrillium Store"
-      icon: "./icon.png"
-      category: "Utilities"
-      tagline: "Test application for Payrillium ecosystem"
-      thumbnail: "./icon.png"
-      author: "Payrillium"
-      developer: "Payrillium Team"
-      architectures: "amd64,arm64"
-      main_app: "hellobox"
-      port_map: "8080"
-      scheme: "http"
-      index: "/"
-      hostname: "hellobox"
-      volumes:
-        - "/DATA/AppData/HelloBox:/usr/share/nginx/html"
-
+    volumes:
+      - type: bind
+        source: /DATA/AppData/$AppID
+        target: /usr/share/nginx/html
 x-casaos:
-  hostname: hellobox
-  scheme: http
-  index: /
-  port_map: "8080"
+  architectures:
+    - amd64
+    - arm64
+  description:
+    en_us: Simple Nginx test app for Payrillium Store
+    es_es: Aplicación de prueba simple de Nginx para Payrillium Store
+  icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
+  tagline:
+    en_us: Test application for Payrillium ecosystem
+    es_es: Aplicación de prueba para el ecosistema Payrillium
   author: Payrillium
   category: Utilities
-  icon: "./icon.png"
+  hostname: ""
+  index: /
+  port_map: "8080"
+  scheme: http
+  store_app_id: hellobox
   title:
-    custom: "HelloBox"
+    en_us: HelloBox
+    es_es: HelloBox
