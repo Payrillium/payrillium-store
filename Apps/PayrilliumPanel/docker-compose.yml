@@ -24,3 +24,14 @@ services:
       hostname: "payrillium-panel"
       volumes:
         - "/DATA/AppData/PayrilliumPanel:/usr/share/nginx/html"
+
+x-casaos:
+  hostname: payrillium-panel
+  scheme: http
+  index: /
+  port_map: "8338"
+  author: Payrillium
+  category: Payrillium
+  icon: "./icon.png"
+  title:
+    custom: "Payrillium Panel"
