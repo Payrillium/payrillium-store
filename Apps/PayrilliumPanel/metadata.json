@@ -1,0 +1,32 @@
+{
+  "name": "Payrillium Panel",
+  "author": "Payrillium",
+  "description": {
+    "en_us": "Frontend placeholder for PayOS testing and development",
+    "es_es": "Frontend placeholder para pruebas y desarrollo de PayOS"
+  },
+  "category": "Payrillium",
+  "architecture": ["amd64", "arm64"],
+  "ports": [
+    {
+      "container": 80,
+      "host": 8338,
+      "description": "Web interface port"
+    }
+  ],
+  "volumes": [
+    {
+      "container": "/usr/share/nginx/html",
+      "host": "/DATA/AppData/PayrilliumPanel",
+      "description": "Web content directory"
+    }
+  ],
+  "environment": [
+    {
+      "name": "TZ",
+      "value": "America/New_York",
+      "description": "Timezone setting"
+    }
+  ],
+  "restart": "unless-stopped"
+}
