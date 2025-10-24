@@ -12,24 +12,28 @@ services:
       - type: bind
         source: /DATA/AppData/$AppID
         target: /usr/share/nginx/html
+    x-casaos:
+      ports:
+        - container: "80"
+          description:
+            en_us: "Web interface port"
+      volumes:
+        - container: /usr/share/nginx/html
+          description:
+            en_us: "Web content directory"
 x-casaos:
   architectures:
     - amd64
     - arm64
+  main: hellobox
+  author: Payrillium
+  category: Utilities
   description:
     en_us: Simple Nginx test app for Payrillium Store
-    es_es: Aplicación de prueba simple de Nginx para Payrillium Store
   icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
   tagline:
     en_us: Test application for Payrillium ecosystem
-    es_es: Aplicación de prueba para el ecosistema Payrillium
-  author: Payrillium
-  category: Utilities
-  hostname: ""
-  index: /
-  port_map: "8080"
-  scheme: http
-  store_app_id: hellobox
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
   title:
     en_us: HelloBox
-    es_es: HelloBox
+  port_map: "8080"
