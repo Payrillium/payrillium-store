@@ -24,7 +24,7 @@ x-casaos:
   architectures: [amd64, arm64]
   main: payrillium-panel
   author: Payrillium
-  category: Utilities
+  category: Payrillium
   title:
     en_us: Payrillium Panel
     es_es: Panel Payrillium
