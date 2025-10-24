@@ -1,12 +1,8 @@
-name: hellobox
 services:
   hellobox:
     image: nginx:alpine
-    container_name: hellobox
     ports:
-      - target: 80
-        published: "8080"
-        protocol: tcp
+      - "8080:80"
     restart: unless-stopped
     volumes:
       - type: bind
@@ -21,19 +17,20 @@ services:
         - container: /usr/share/nginx/html
           description:
             en_us: "Web content directory"
+
 x-casaos:
-  architectures:
-    - amd64
-    - arm64
+  architectures: [amd64, arm64]
   main: hellobox
   author: Payrillium
   category: Utilities
+  title:
+    en_us: HelloBox
   description:
     en_us: Simple Nginx test app for Payrillium Store
   icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
   tagline:
     en_us: Test application for Payrillium ecosystem
-  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
-  title:
-    en_us: HelloBox
+  index: /
+  scheme: http
   port_map: "8080"
