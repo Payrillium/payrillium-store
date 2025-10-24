@@ -14,10 +14,22 @@ services:
       - type: bind
         source: /DATA/AppData/$AppID
         target: /usr/share/nginx/html
+    x-casaos:
+      ports:
+        - container: "80"
+          description:
+            en_us: "Web interface port"
+      volumes:
+        - container: /usr/share/nginx/html
+          description:
+            en_us: "Web content directory"
 x-casaos:
   architectures:
     - amd64
     - arm64
+  main: payrillium-panel
+  author: Payrillium
+  category: Payrillium
   description:
     en_us: Frontend placeholder for PayOS testing and development
     es_es: Frontend placeholder para pruebas y desarrollo de PayOS
@@ -25,13 +37,9 @@ x-casaos:
   tagline:
     en_us: PayOS frontend testing environment
     es_es: Entorno de pruebas frontend para PayOS
-  author: Payrillium
-  category: Payrillium
-  hostname: ""
-  index: /
-  port_map: "8338"
-  scheme: http
-  store_app_id: payrillium-panel
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/PayrilliumPanel/icon.png
   title:
     en_us: Payrillium Panel
     es_es: Panel Payrillium
+  index: /
+  port_map: "8338"
