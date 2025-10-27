@@ -5,8 +5,11 @@ Official Payrillium applications store for CasaOS - A comprehensive collection o
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Important: Category Filtering](#important-category-filtering)
 - [Installation](#installation)
+- [Creating Compatible Applications](#creating-compatible-applications)
 - [Available Applications](#available-applications)
+- [Common Errors and Solutions](#common-errors-and-solutions)
 - [Management Commands](#management-commands)
 - [Development Guide](#development-guide)
 - [Troubleshooting](#troubleshooting)
@@ -23,6 +26,18 @@ Payrillium Store is a third-party application store for CasaOS that provides a c
 - 🌐 **Multi-language Support**: Applications with English and Spanish support
 - 📱 **Responsive Design**: Optimized for various device architectures (amd64, arm64)
 - 🔄 **Auto-updates**: Automatic synchronization with GitHub repository
+
+## ⚠️ Important: Category Filtering
+
+**For your apps to appear in the "Payrillium" filter:**
+
+- ✅ Use `category: Payrillium` in the `category` field
+- ✅ Use `author: Payrillium` in the `author` field
+- ❌ **DO NOT use** `category: Utilities` or other generic categories
+
+**Remember:** Although you use `author: Payrillium`, the actual filtering is done by the `category` field.
+
+---
 
 ## 🚀 Installation
 
@@ -56,6 +71,256 @@ casaos-cli app-management list app-store
 # You should see Payrillium Store listed
 ```
 
+---
+
+## 📝 Creating Compatible Applications
+
+### Required Files Per Application
+
+```
+Apps/
+└── AppName/
+    ├── docker-compose.yml   # ✅ REQUIRED - Main file
+    ├── icon.png             # ✅ REQUIRED - App icon (192x192px)
+    ├── screenshot-1.png    # ✅ REQUIRED - At least 1 screenshot
+    ├── screenshot-2.png    # ⚪ OPTIONAL - More screenshots
+    └── thumbnail.png        # ⚪ OPTIONAL - For featured apps
+```
+
+### Critical Elements in `docker-compose.yml`
+
+#### 1. **Top Level - `name` (REQUIRED)**
+
+```yaml
+name: app-name # Only lowercase letters, numbers, hyphen and underscore
+```
+
+#### 2. **`services` Section (REQUIRED)**
+
+```yaml
+services:
+  service-name:
+    image: image:version # ✅ USE SPECIFIC VERSION, NOT "latest"
+    ports:
+      - target: 8080
+        published: "8080"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /DATA/AppData/$AppID/config
+        target: /app/data
+```
+
+#### 3. **`x-casaos` Extension at SERVICE LEVEL (REQUIRED)**
+
+```yaml
+x-casaos:
+  envs:
+    - container: VARIABLE
+      description:
+        en_us: "Variable description"
+  ports:
+    - container: "8080"
+      description:
+        en_us: "Application web port"
+  volumes:
+    - container: /app/data
+      description:
+        en_us: "Data directory"
+```
+
+#### 4. **`x-casaos` Extension at COMPOSE LEVEL (REQUIRED)**
+
+```yaml
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+    - arm
+  main: service-name # ✅ Must match the service name
+  author: Payrillium
+  category:
+    Payrillium # ✅ REQUIRED: Use "Payrillium" to appear in Payrillium filter
+    # ⚠️ IMPORTANT: Although we use "author: Payrillium", filtering is done by "category"
+  description:
+    en_us: "Complete application description"
+  developer: Developer Name
+  icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/AppName/icon.png
+  tagline:
+    en_us: "Short phrase describing the app"
+  title:
+    en_us: "App Name"
+  port_map: "8080"
+  scheme: http
+  index: /
+```
+
+### Complete Working Example
+
+```yaml
+name: hellobox
+services:
+  hellobox:
+    image: nginx:alpine
+    ports:
+      - target: 80
+        published: "8080"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /DATA/AppData/$AppID
+        target: /usr/share/nginx/html
+    x-casaos:
+      ports:
+        - container: "80"
+          description:
+            en_us: "Web interface port"
+      volumes:
+        - container: /usr/share/nginx/html
+          description:
+            en_us: "Web content directory"
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: hellobox
+  author: Payrillium
+  category: Payrillium # ✅ This creates the filter automatically
+  title:
+    en_us: HelloBox
+  description:
+    en_us: Test application for Payrillium ecosystem
+  icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/HelloBox/icon.png
+  tagline:
+    en_us: Test application for Payrillium ecosystem
+  index: /
+  scheme: http
+  port_map: "8080"
+```
+
+### Validation Rules
+
+#### **App Name (`name`):**
+
+- ✅ Only lowercase letters
+- ✅ Numbers allowed
+- ✅ Hyphen (`-`) and underscore (`_`) allowed
+- ❌ No uppercase letters
+- ❌ No spaces
+- ❌ No special characters
+
+**Valid examples:**
+
+- `hello-box` ✅
+- `app_123` ✅
+- `test` ✅
+
+**Invalid examples:**
+
+- `Hello-Box` ❌ (uppercase)
+- `App Name` ❌ (spaces)
+- `app@123` ❌ (special characters)
+
+#### **Image Version:**
+
+- ✅ Use specific version: `nginx:1.25.3`
+- ❌ DO NOT use `latest`: `nginx:latest`
+
+#### **`category` Field:**
+
+Must match a category in `category-list.json`:
+
+- `Payrillium` ⭐ **Custom category for Payrillium apps**
+  - **IMPORTANT**: Use `category: Payrillium` for your apps to appear in the Payrillium filter
+  - Although you use `author: Payrillium`, filtering is done by the `category` field
+- `Utilities`
+- `Media`
+- `Network`
+- `Developer`
+- etc.
+
+---
+
+## ⚠️ Common Errors and Solutions
+
+### **Error 1: "failed to load compose file"**
+
+**Cause:** Missing `x-casaos` extension  
+**Solution:** Add `x-casaos` both at service level and root level
+
+### **Error 2: "extension x-casaos not found"**
+
+**Cause:** Incorrect `x-casaos` structure  
+**Solution:** Verify that all required fields are present
+
+### **Error 3: Apps appear in wrong category**
+
+**Cause:** Incorrect or missing `category` field  
+**Solution:** Use a category from `category-list.json`
+
+### **Error 4: Cannot install from app-store**
+
+**Cause:** CasaOS cannot download files  
+**Solution:** Verify that:
+
+- GitHub URL is accessible
+- Files have correct permissions
+- ZIP has correct structure
+
+### **Error 5: Store not loading**
+
+**Cause:** Network issues or invalid ZIP  
+**Solution:**
+
+```bash
+# Check logs
+sudo tail -f /var/log/casaos/app-management.log | grep -i error
+
+# Force re-registration
+casaos-cli app-management unregister app-store <store-id>
+casaos-cli app-management register app-store "https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip"
+```
+
+### **Error 6: Applications not appearing**
+
+**Cause:** Missing files or incorrect structure  
+**Solution:**
+
+```bash
+# Check store root directory
+sudo find /var/lib/casaos/appstore -name "*payrillium*" -type d
+
+# Verify docker-compose.yml syntax
+docker-compose -f Apps/YourApp/docker-compose.yml config
+
+# Check for missing files
+ls -la Apps/YourApp/
+```
+
+### **Error 7: Port conflicts**
+
+**Cause:** Port already in use  
+**Solution:**
+
+- Ensure `port_map` in docker-compose.yml matches the actual port
+- Check that ports are not already in use
+- Verify port mapping format: `"8080"` (with quotes)
+
+### **Error 8: Extension errors**
+
+**Cause:** Incorrect `x-casaos` structure  
+**Solution:**
+
+- Ensure `x-casaos` extension is present at both service and root levels
+- Verify all required fields are present in `x-casaos` section
+- Check YAML syntax and indentation
+
+---
+
 ## 📱 Available Applications
 
 ### HelloBox
@@ -67,11 +332,13 @@ casaos-cli app-management list app-store
 
 ### Payrillium Panel
 
-- **Category**: Utilities
+- **Category**: Payrillium
 - **Description**: Frontend placeholder for PayOS testing and development
 - **Port**: 8339
 - **Purpose**: PayOS frontend testing environment
 - **Features**: Multi-language support (English/Spanish)
+
+---
 
 ## 🛠️ Management Commands
 
@@ -134,6 +401,8 @@ casaos-cli app-management uninstall app <app-name>
 casaos-cli app-management status app <app-name>
 ```
 
+---
+
 ## 🔧 Development Guide
 
 ### Creating a New Application
@@ -145,62 +414,13 @@ casaos-cli app-management status app <app-name>
    cd Apps/YourAppName
    ```
 
-2. **Create docker-compose.yml**:
-
-   ```yaml
-   name: your-app-name
-   services:
-     your-app-name:
-       image: your-image:tag
-       container_name: your-app-name
-       ports:
-         - target: 80
-           published: "8080"
-           protocol: tcp
-       restart: unless-stopped
-       volumes:
-         - type: bind
-           source: /DATA/AppData/$AppID
-           target: /app/data
-       x-casaos:
-         ports:
-           - container: "80"
-             description:
-               en_us: "Web interface port"
-         volumes:
-           - container: /app/data
-             description:
-               en_us: "Application data directory"
-
-   x-casaos:
-     architectures:
-       - amd64
-       - arm64
-     main: your-app-name
-     author: Payrillium
-     category: Utilities
-     description:
-       en_us: "Your application description"
-       es_es: "Descripción de tu aplicación"
-     icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/YourAppName/icon.png
-     thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/YourAppName/icon.png
-     tagline:
-       en_us: "Your application tagline"
-       es_es: "Eslogan de tu aplicación"
-     title:
-       en_us: "Your App Name"
-       es_es: "Nombre de tu App"
-     index: /
-     scheme: http
-     port_map: "8080"
-   ```
+2. **Create docker-compose.yml** (see example above)
 
 3. **Add Application Icon**:
-
    - Create `icon.png` (recommended: 512x512px)
    - Place in `Apps/YourAppName/icon.png`
 
-4. **Update category-list.json** (if needed):
+4. **Update category-list.json** (if adding new category):
 
    ```json
    [
@@ -208,11 +428,6 @@ casaos-cli app-management status app <app-name>
        "name": "All",
        "font": "apps",
        "description": "All Apps"
-     },
-     {
-       "name": "Utilities",
-       "font": "toolbox-outline",
-       "description": "Utilities Apps"
      },
      {
        "name": "Payrillium",
@@ -266,48 +481,9 @@ casaos-cli app-management status app <app-name>
 4. **Update Store**: Re-register the store in CasaOS
 5. **Verify**: Check that changes appear in CasaOS
 
+---
+
 ## 🔍 Troubleshooting
-
-### Common Issues
-
-#### Store Not Loading
-
-```bash
-# Check if store is registered
-casaos-cli app-management list app-store
-
-# Check logs for errors
-sudo tail -f /var/log/casaos/app-management.log | grep -i error
-
-# Force re-registration
-casaos-cli app-management unregister app-store <store-id>
-casaos-cli app-management register app-store "https://github.com/Payrillium/payrillium-store/archive/refs/heads/main.zip"
-```
-
-#### Applications Not Appearing
-
-```bash
-# Check store root directory
-sudo find /var/lib/casaos/appstore -name "*payrillium*" -type d
-
-# Verify docker-compose.yml syntax
-docker-compose -f Apps/YourApp/docker-compose.yml config
-
-# Check for missing files
-ls -la Apps/YourApp/
-```
-
-#### Port Conflicts
-
-- Ensure `port_map` in docker-compose.yml matches the actual port
-- Check that ports are not already in use
-- Verify port mapping format: `"8080"` (with quotes)
-
-#### Extension Errors
-
-- Ensure `x-casaos` extension is present at both service and root levels
-- Verify all required fields are present in `x-casaos` section
-- Check YAML syntax and indentation
 
 ### Debug Commands
 
@@ -323,7 +499,19 @@ sudo ls -la /var/lib/casaos/appstore/
 
 # Verify downloaded files
 sudo find /var/lib/casaos/appstore -name "*.yml" -exec head -20 {} \;
+
+# Check for x-casaos extension
+sudo grep -A 5 "x-casaos:" /var/lib/casaos/appstore/github.com/[hash]/Apps/YourApp/docker-compose.yml
+
+# Verify category field
+sudo grep "category:" /var/lib/casaos/appstore/github.com/[hash]/Apps/YourApp/docker-compose.yml
 ```
+
+### Common Issues
+
+See [Common Errors and Solutions](#common-errors-and-solutions) section above.
+
+---
 
 ## 🤝 Contributing
 
@@ -352,6 +540,39 @@ We welcome contributions to the Payrillium Store! Here's how you can help:
 - Include multi-language support when possible
 - Follow CasaOS naming conventions
 - Ensure applications are stable and secure
+- **Use `category: Payrillium` for Payrillium apps**
+
+### Validation Checklist
+
+Before uploading your app to GitHub, verify:
+
+- [ ] `docker-compose.yml` file exists
+- [ ] Has `name` at top level
+- [ ] Has `services` section
+- [ ] Uses specific image version (not `latest`)
+- [ ] Has `x-casaos` at service level
+- [ ] Has `x-casaos` at root level
+- [ ] `main` field matches service name
+- [ ] `category` field exists and is valid
+- [ ] `author` field is defined
+- [ ] `description` has at least `en_us`
+- [ ] `title` has at least `en_us`
+- [ ] `icon` points to valid URL
+- [ ] `architectures` field is defined
+- [ ] `icon.png` file exists (192x192px)
+- [ ] `screenshot-1.png` file exists
+- [ ] Names without uppercase or spaces
+- [ ] Tested locally before uploading
+
+---
+
+## 📚 References
+
+- [CasaOS AppStore Contributing Guide](https://github.com/IceWhaleTech/CasaOS-AppStore/blob/main/CONTRIBUTING.md)
+- [Docker Compose Specification](https://docs.docker.com/compose/compose-file/)
+- [CasaOS Documentation](https://wiki.casaos.io/)
+
+---
 
 ## 📞 Support
 
