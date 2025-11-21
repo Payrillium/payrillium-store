@@ -1,6 +1,6 @@
 services:
   app:
-    image: payrillium/payrillium:2.1.0_b31
+    image: payrillium/payrillium1:2.1.0_b31
     container_name: app
     restart: unless-stopped
     ports:
@@ -78,9 +78,9 @@ services:
     volumes:
       - payrillium-db:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: payrillium
-      POSTGRES_USER: payrillium
-      POSTGRES_PASSWORD: payrillium
+      POSTGRES_DB: app
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
     networks:
       - payrillium-net
 
@@ -115,6 +115,8 @@ services:
     image: payrillium/payrillium:netscan_2.1.1
     container_name: netscan
     restart: unless-stopped
+    ports:
+      - "8383:8383"
     networks:
       - payrillium-net
 
