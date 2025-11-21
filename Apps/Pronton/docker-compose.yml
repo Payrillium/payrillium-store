@@ -1,0 +1,184 @@
+services:
+  app:
+    image: payrillium/payrillium:2.1.0_b31
+    restart: unless-stopped
+
+    command:
+      - /usr/bin/supervisord
+      - -c
+      - /etc/supervisor/conf.d/supervisord.conf
+
+    cpu_shares: 90
+
+    deploy:
+      resources:
+        limits:
+          memory: 31845M
+
+    environment:
+      - COMPOSER_ALLOW_SUPERUSER=1
+      - GPG_KEYS=1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - PHP_ASC_URL=https://www.php.net/distributions/php-8.3.22.tar.xz.asc
+      - PHP_CFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+      - PHP_CPPFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+      - PHP_INI_DIR=/usr/local/etc/php
+      - PHP_LDFLAGS=-Wl,-O1 -pie
+      - PHP_SHA256=66c86889059bd27ccf460590ca48fcaf3261349cc9bdba2023ac6a265beabf36
+      - PHP_URL=https://www.php.net/distributions/php-8.3.22.tar.xz
+      - PHP_VERSION=8.3.22
+      - PHPIZE_DEPS=autoconf dpkg-dev dpkg file g++ gcc libc-dev make pkgconf re2c
+      - SERVICE_NAME=app
+
+    ports:
+      - "8339:443"
+      - "8338:80"
+
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+      - type: bind
+        source: /var/docker-data/appdata/images
+        target: /var/www/html/storage/app/public/images
+
+      - type: bind
+        source: /var/docker-save/music
+        target: /var/www/html/storage/app/public/music
+
+      - type: bind
+        source: /var/docker-data/appdata/data/import_files
+        target: /var/www/html/storage/app/public/data/import_files
+
+      - type: bind
+        source: /usr/local/var/urbackup/tokens
+        target: /var/www/html/storage/app/public/tokens
+
+      - type: bind
+        source: /var/docker-data/appdata/tickets
+        target: /var/www/html/storage/app/public/tickets
+
+      - type: bind
+        source: /var/docker-data/appdata/signature
+        target: /var/www/html/storage/app/public/signature
+
+      - type: bind
+        source: /var/docker-data/appdata/logs/laravel
+        target: /var/www/html/storage/logs
+
+      - type: bind
+        source: /var/docker-save/camera
+        target: /var/www/html/storage/app/public/camera
+
+      - type: bind
+        source: /var/docker-config
+        target: /var/www/html/docker
+
+      - type: bind
+        source: /var/docker-data/appdata/data/import_templates
+        target: /var/www/html/storage/app/public/data/import_templates
+
+    # Lo que CasaOS enseña en el UI para este servicio
+    x-casaos:
+      envs:
+        - container: SERVICE_NAME
+          description:
+            en_us: ""
+        - container: PATH
+          description:
+            en_us: ""
+        - container: PHPIZE_DEPS
+          description:
+            en_us: ""
+        - container: PHP_INI_DIR
+          description:
+            en_us: ""
+        - container: PHP_CFLAGS
+          description:
+            en_us: ""
+        - container: PHP_CPPFLAGS
+          description:
+            en_us: ""
+        - container: PHP_LDFLAGS
+          description:
+            en_us: ""
+        - container: GPG_KEYS
+          description:
+            en_us: ""
+        - container: PHP_VERSION
+          description:
+            en_us: ""
+        - container: PHP_URL
+          description:
+            en_us: ""
+        - container: PHP_ASC_URL
+          description:
+            en_us: ""
+        - container: PHP_SHA256
+          description:
+            en_us: ""
+        - container: COMPOSER_ALLOW_SUPERUSER
+          description:
+            en_us: ""
+
+      ports:
+        - container: "443"
+          description:
+            en_us: "HTTPS Web UI"
+        - container: "80"
+          description:
+            en_us: "HTTP Web UI"
+
+      volumes:
+        - container: /var/run/docker.sock
+          description:
+            en_us: "Docker socket for internal management"
+        - container: /var/www/html/storage/app/public/images
+          description:
+            en_us: "Product and media images"
+        - container: /var/www/html/storage/app/public/music
+          description:
+            en_us: "Music files"
+        - container: /var/www/html/storage/app/public/data/import_files
+          description:
+            en_us: "Import files"
+        - container: /var/www/html/storage/app/public/tokens
+          description:
+            en_us: "UrBackup tokens"
+        - container: /var/www/html/storage/app/public/tickets
+          description:
+            en_us: "Tickets"
+        - container: /var/www/html/storage/app/public/signature
+          description:
+            en_us: "Signatures"
+        - container: /var/www/html/storage/logs
+          description:
+            en_us: "Laravel logs"
+        - container: /var/www/html/storage/app/public/camera
+          description:
+            en_us: "Camera captures"
+        - container: /var/www/html/docker
+          description:
+            en_us: "Docker helper config"
+        - container: /var/www/html/storage/app/public/data/import_templates
+          description:
+            en_us: "Import templates"
+
+# Metadatos globales de la app en el Store (igual estilo que HelloBox)
+x-casaos:
+  architectures: [amd64]
+  main: app
+  author: Payrillium
+  category: Payrillium
+  title:
+    en_us: Payrillium Proton
+  description:
+    en_us: Main Payrillium payment server (Proton) used by Payrillium POS devices.
+  icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/proton.png
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/proton.png
+  tagline:
+    en_us: Core Payrillium payment platform.
+  index: /
+  scheme: http
+  port_map: "8338"
