@@ -1,6 +1,6 @@
 services:
   app:
-    image: payrillium/payrillium1:2.1.0_b31
+    image: payrillium/payrillium:2.1.0_b31
     container_name: app
     restart: unless-stopped
     ports:
