@@ -1,94 +1,103 @@
-version: "3.8"
-
-name: bookstack
-
 services:
   bookstack:
-    image: lscr.io/linuxserver/bookstack:latest
+    image: linuxserver/bookstack:25.11.20251109
     container_name: bookstack
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
-      - DB_HOST=bookstack-db
-      - DB_USER=bookstack
-      - DB_PASS=bookstack_pass
-      - DB_DATABASE=bookstack_app
+    restart: unless-stopped
+
     volumes:
+      # Config de BookStack
       - /DATA/AppData/$AppID/bookstack/config:/config
+
+    environment:
+      - APP_KEY=base64:3w/hRS2HYVFH5tJqD9AFlyurTh8mBByMKeMRyH9kEEQ=
+      # IMPORTANTE: cambia esto cuando instales (o desde la UI de CasaOS)
+      - APP_URL=http://mini-aoostart:8080
+      - DB_HOST=bookstack-db
+      - DB_USERNAME=bigbear
+      - DB_PASSWORD=a3e8949f-484c-4877-afdb-391f892f9bb6
+      - DB_DATABASE=bookstackapp
+
     ports:
-      - "8280:80"
+      # Host 8080 → contenedor 80
+      - "8080:80"
+
     depends_on:
       - bookstack-db
-    restart: unless-stopped
+
+    networks:
+      - bookstack-network
+
     x-casaos:
       envs:
+        - container: APP_URL
+          description:
+            en_us: "Public URL for BookStack (set to your server URL)."
         - container: DB_HOST
           description:
-            en_us: "Database host"
-        - container: DB_USER
+            en_us: "Database host name"
+        - container: DB_USERNAME
           description:
             en_us: "Database user"
-        - container: DB_PASS
+        - container: DB_PASSWORD
           description:
             en_us: "Database password"
         - container: DB_DATABASE
           description:
             en_us: "Database name"
+
       ports:
         - container: "80"
           description:
-            en_us: "Web interface"
+            en_us: "BookStack web interface (HTTP)"
+
       volumes:
         - container: /config
           description:
-            en_us: "BookStack configuration and data"
+            en_us: "BookStack config & app data"
 
   bookstack-db:
-    image: lscr.io/linuxserver/mariadb:latest
+    image: linuxserver/mariadb:10.11.6
     container_name: bookstack-db
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
-      - MYSQL_ROOT_PASSWORD=bookstack_root_pass
-      - MYSQL_DATABASE=bookstack_app
-      - MYSQL_USER=bookstack
-      - MYSQL_PASSWORD=bookstack_pass
-    volumes:
-      - /DATA/AppData/$AppID/bookstack/db:/config
     restart: unless-stopped
+
+    environment:
+      - MYSQL_ROOT_PASSWORD=793e92b7-58d2-47b9-aae5-b8c7d58bd699
+      - MYSQL_DATABASE=bookstackapp
+      - MYSQL_USER=bigbear
+      - MYSQL_PASSWORD=a3e8949f-484c-4877-afdb-391f892f9bb6
+
+    volumes:
+      - /DATA/AppData/$AppID/bookstack/mysql:/config
+
+    networks:
+      - bookstack-network
+
     x-casaos:
-      envs:
-        - container: MYSQL_DATABASE
-          description:
-            en_us: "Database name"
-        - container: MYSQL_USER
-          description:
-            en_us: "Database user"
-        - container: MYSQL_PASSWORD
-          description:
-            en_us: "Database password"
       volumes:
         - container: /config
           description:
-            en_us: "MariaDB configuration and data"
+            en_us: "MariaDB data & config"
+
+networks:
+  bookstack-network:
+    driver: bridge
 
 x-casaos:
   architectures:
     - amd64
+    - arm64
   main: bookstack
   author: Payrillium
   category: Payrillium
-  developer: BookStack
+  developer: "Dan Brown"
   title:
     en_us: "BookStack"
   description:
-    en_us: "Self-hosted documentation and wiki platform."
+    en_us: "Simple, self-hosted platform for organizing and storing documentation and knowledge."
   tagline:
-    en_us: "Manage all your docs in one place."
-  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Bookstack/icon.png"
-  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Bookstack/screenshot-1.png"
+    en_us: "Organize your team knowledge with BookStack on PayrilliumOS."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Bookstack/bookstack.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Bookstack/bookstack.png"
   index: /
   scheme: http
-  port_map: "8280"
+  port_map: "8080"
