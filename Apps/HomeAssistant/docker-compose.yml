@@ -1,0 +1,42 @@
+services:
+  home-assistant:
+    image: ghcr.io/home-assistant/home-assistant:2025.11.2
+    container_name: home-assistant
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /DATA/AppData/$AppID/home-assistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+
+    x-casaos:
+      volumes:
+        - container: /config
+          description:
+            en_us: "Home Assistant configuration directory"
+        - container: /etc/localtime
+          description:
+            en_us: "Host localtime (read-only)"
+        - container: /run/dbus
+          description:
+            en_us: "D-Bus socket for system integrations (read-only)"
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: home-assistant
+  author: Payrillium
+  category: Payrillium
+  developer: home-assistant
+  title:
+    en_us: "Home Assistant"
+  description:
+    en_us: "Open source home automation platform focused on local control and privacy."
+  tagline:
+    en_us: "Automate your home with local control on PayrilliumOS."
+  icon: "https://cdn.jsdelivr.net/gh/selfhst/icons/png/home-assistant.png"
+  thumbnail: "https://cdn.jsdelivr.net/gh/selfhst/icons/png/home-assistant.png"
+  index: /
+  scheme: http
+  port_map: "8123"
