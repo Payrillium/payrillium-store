@@ -31,8 +31,8 @@ x-casaos:
     en_us: "Self-hosted music management and streaming automation platform."
   tagline:
     en_us: "Control and stream your music everywhere with PayrilliumOS."
-  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MusicAssistant/icon.png"
-  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MusicAssistant/screenshot-1.png"
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MusicAssistant/logo-ma.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MusicAssistant/logo-ma.png"
   index: /
   scheme: http
   port_map: "8095"
