@@ -10,14 +10,11 @@ services:
     ports:
       - "8069:8069"
     environment:
-      # Datos de conexión a Postgres
       - HOST=db
       - PORT=5432
       - USER=odoo
       - PASSWORD=odoo18password
-      # Opcional: ajusta workers según el server
       - WORKERS=2
-      # Idioma y zona horaria por defecto (puedes ajustarlos)
       - LANG=es_ES.UTF-8
       - TZ=America/New_York
     volumes:
@@ -27,7 +24,6 @@ services:
     networks:
       - odoo18-net
 
-    # Info para CasaOS (solo el servicio principal que expone la UI)
     x-casaos:
       ports:
         - container: "8069"
@@ -76,8 +72,8 @@ x-casaos:
     en_us: Odoo 18 Community
   description:
     en_us: "Odoo 18 Community ERP running on PostgreSQL."
-  icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/odoo18.png
-  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/odoo18.png
+  icon: https://github.com/Payrillium/payrillium-store/blob/main/Apps/odoo/logo-odoo.jpg
+  thumbnail: https://github.com/Payrillium/payrillium-store/blob/main/Apps/odoo/logo-odoo.jpg
   tagline:
     en_us: "Business apps & ERP for your PayrilliumOS."
   index: /
