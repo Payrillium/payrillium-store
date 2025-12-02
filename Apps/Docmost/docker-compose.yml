@@ -1,0 +1,102 @@
+version: "3.8"
+
+name: docmost
+
+services:
+  docmost:
+    image: docmost/docmost:latest
+    container_name: docmost
+    depends_on:
+      - docmost-db
+      - docmost-redis
+    environment:
+      # Cambia esto a tu dominio real
+      - APP_URL=http://localhost:8300
+      # Genera un secreto largo: openssl rand -hex 32
+      - APP_SECRET=REPLACE_WITH_LONG_SECRET
+      - DATABASE_URL=postgresql://docmost:STRONG_DB_PASSWORD@docmost-db:5432/docmost?schema=public
+      - REDIS_URL=redis://docmost-redis:6379
+    ports:
+      - "8300:3000"
+    volumes:
+      - /DATA/AppData/$AppID/docmost/storage:/app/data/storage
+    restart: unless-stopped
+    x-casaos:
+      envs:
+        - container: APP_URL
+          description:
+            en_us: "Public URL of Docmost"
+        - container: APP_SECRET
+          description:
+            en_us: "Application secret (must be long & random)"
+        - container: DATABASE_URL
+          description:
+            en_us: "PostgreSQL connection string"
+        - container: REDIS_URL
+          description:
+            en_us: "Redis connection URL"
+      ports:
+        - container: "3000"
+          description:
+            en_us: "Web interface"
+      volumes:
+        - container: /app/data/storage
+          description:
+            en_us: "Docmost file storage"
+
+  docmost-db:
+    image: postgres:16-alpine
+    container_name: docmost-db
+    environment:
+      - POSTGRES_DB=docmost
+      - POSTGRES_USER=docmost
+      - POSTGRES_PASSWORD=STRONG_DB_PASSWORD
+    volumes:
+      - /DATA/AppData/$AppID/docmost/db:/var/lib/postgresql/data
+    restart: unless-stopped
+    x-casaos:
+      envs:
+        - container: POSTGRES_DB
+          description:
+            en_us: "Database name"
+        - container: POSTGRES_USER
+          description:
+            en_us: "Database user"
+        - container: POSTGRES_PASSWORD
+          description:
+            en_us: "Database password"
+      volumes:
+        - container: /var/lib/postgresql/data
+          description:
+            en_us: "PostgreSQL data directory"
+
+  docmost-redis:
+    image: redis:7.2-alpine
+    container_name: docmost-redis
+    volumes:
+      - /DATA/AppData/$AppID/docmost/redis:/data
+    restart: unless-stopped
+    x-casaos:
+      volumes:
+        - container: /data
+          description:
+            en_us: "Redis data"
+
+x-casaos:
+  architectures:
+    - amd64
+  main: docmost
+  author: Payrillium
+  category: Payrillium
+  developer: Docmost
+  title:
+    en_us: "Docmost"
+  description:
+    en_us: "Open source collaborative documentation platform."
+  tagline:
+    en_us: "Real-time collaborative docs for your team."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Docmost/icon.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Docmost/screenshot-1.png"
+  index: /
+  scheme: http
+  port_map: "8300"
