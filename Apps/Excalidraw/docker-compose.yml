@@ -1,0 +1,36 @@
+version: "3.8"
+
+name: excalidraw
+
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    container_name: excalidraw
+    restart: unless-stopped
+    ports:
+      - "8320:80"
+    # Excalidraw es mayormente stateless; no necesita volumen obligatorio
+    x-casaos:
+      ports:
+        - container: "80"
+          description:
+            en_us: "Whiteboard UI"
+
+x-casaos:
+  architectures:
+    - amd64
+  main: excalidraw
+  author: Payrillium
+  category: Payrillium
+  developer: Excalidraw
+  title:
+    en_us: "Excalidraw"
+  description:
+    en_us: "Virtual whiteboard for sketching diagrams and ideas."
+  tagline:
+    en_us: "Hand-drawn style diagrams and boards."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Excalidraw/icon.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Excalidraw/screenshot-1.png"
+  index: /
+  scheme: http
+  port_map: "8320"
