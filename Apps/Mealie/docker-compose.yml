@@ -1,0 +1,39 @@
+services:
+  mealie:
+    image: hkotel/mealie:v3.5.0
+    container_name: mealie
+    restart: unless-stopped
+    volumes:
+      - /DATA/AppData/$AppID/mealie/data:/app/data
+    ports:
+      - "9925:9000"
+
+    x-casaos:
+      ports:
+        - container: "9000"
+          description:
+            en_us: "Mealie web interface (HTTP)"
+      volumes:
+        - container: /app/data
+          description:
+            en_us: "Mealie data directory (recipes, config, etc.)"
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: mealie
+  author: Payrillium
+  category: Payrillium
+  developer: mealie-recipes
+  title:
+    en_us: "Mealie"
+  description:
+    en_us: "Self-hosted recipe manager and meal planner with a REST API backend and a modern Vue-based frontend."
+  tagline:
+    en_us: "Organize recipes and plan meals for the whole family."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Mealie/mealie.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Mealie/mealie.png"
+  index: /
+  scheme: http
+  port_map: "9925"
