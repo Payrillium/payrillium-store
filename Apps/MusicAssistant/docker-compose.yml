@@ -1,0 +1,38 @@
+services:
+  music-assistant:
+    image: ghcr.io/music-assistant/server:2.6.3
+    container_name: music-assistant
+    restart: unless-stopped
+    volumes:
+      - /DATA/AppData/$AppID/music-assistant/data:/data
+    network_mode: host
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
+
+    x-casaos:
+      volumes:
+        - container: /data
+          description:
+            en_us: "Music Assistant configuration and media data"
+
+x-casaos:
+  architectures:
+    - amd64
+  main: music-assistant
+  author: Payrillium
+  category: Payrillium
+  developer: Music Assistant
+  title:
+    en_us: "Music Assistant"
+  description:
+    en_us: "Self-hosted music management and streaming automation platform."
+  tagline:
+    en_us: "Control and stream your music everywhere with PayrilliumOS."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MusicAssistant/icon.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MusicAssistant/screenshot-1.png"
+  index: /
+  scheme: http
+  port_map: "8095"
