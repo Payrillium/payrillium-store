@@ -142,7 +142,7 @@ x-casaos:
   author: Payrillium
   category: Payrillium
   title:
-    en_us: Payrillium Proton 1 2.1.0_b31
+    en_us: Payrillium Proton
   description:
     en_us: Payrillium POS server (Proton app + internal services).
   icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/proton.png
