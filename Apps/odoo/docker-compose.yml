@@ -72,8 +72,8 @@ x-casaos:
     en_us: Odoo 18 Community
   description:
     en_us: "Odoo 18 Community ERP running on PostgreSQL."
-  icon: https://github.com/Payrillium/payrillium-store/blob/main/Apps/odoo/logo-odoo.jpg
-  thumbnail: https://github.com/Payrillium/payrillium-store/blob/main/Apps/odoo/logo-odoo.jpg
+  icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/odoo/logo-odoo.jpg
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/odoo/logo-odoo.jpg
   tagline:
     en_us: "Business apps & ERP for your PayrilliumOS."
   index: /
