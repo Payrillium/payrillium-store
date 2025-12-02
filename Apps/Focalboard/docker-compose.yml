@@ -1,0 +1,39 @@
+services:
+  focalboard:
+    image: mattermost/focalboard:7.11.4
+    container_name: focalboard
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    network_mode: bridge
+    volumes:
+      - /DATA/AppData/$AppID/focalboard/data:/opt/focalboard/data
+
+    x-casaos:
+      ports:
+        - container: "8000"
+          description:
+            en_us: "Focalboard web interface (HTTP)"
+      volumes:
+        - container: /opt/focalboard/data
+          description:
+            en_us: "Focalboard data directory"
+
+x-casaos:
+  architectures:
+    - amd64
+  main: focalboard
+  author: Payrillium
+  category: Payrillium
+  developer: mattermost
+  title:
+    en_us: "Focalboard"
+  description:
+    en_us: "Open source, self-hosted project management tool and alternative to Trello, Notion, and Asana."
+  tagline:
+    en_us: "Kanban-style boards and tasks for your team."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Focalboard/focalboard.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Focalboard/focalboard.png"
+  index: /
+  scheme: http
+  port_map: "8000"
