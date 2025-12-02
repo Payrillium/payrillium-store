@@ -1,0 +1,85 @@
+name: payrillium-odoo18
+
+services:
+  odoo:
+    image: odoo:18
+    container_name: odoo18
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    environment:
+      # Datos de conexión a Postgres
+      - HOST=db
+      - PORT=5432
+      - USER=odoo
+      - PASSWORD=odoo18password
+      # Opcional: ajusta workers según el server
+      - WORKERS=2
+      # Idioma y zona horaria por defecto (puedes ajustarlos)
+      - LANG=es_ES.UTF-8
+      - TZ=America/New_York
+    volumes:
+      - odoo18-web-data:/var/lib/odoo
+      - /var/docker-data/appdata/odoo18/config:/etc/odoo
+      - /var/docker-data/appdata/odoo18/addons:/mnt/extra-addons
+    networks:
+      - odoo18-net
+
+    # Info para CasaOS (solo el servicio principal que expone la UI)
+    x-casaos:
+      ports:
+        - container: "8069"
+          description:
+            en_us: "Odoo 18 web interface (HTTP)"
+      volumes:
+        - container: /var/lib/odoo
+          description:
+            en_us: "Odoo data directory"
+        - container: /etc/odoo
+          description:
+            en_us: "Odoo configuration files (odoo.conf, etc.)"
+        - container: /mnt/extra-addons
+          description:
+            en_us: "Custom addons for Odoo 18"
+
+  db:
+    image: postgres:16
+    container_name: odoo18-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo18password
+      - TZ=America/New_York
+    volumes:
+      - odoo18-db-data:/var/lib/postgresql/data
+    networks:
+      - odoo18-net
+
+networks:
+  odoo18-net:
+    driver: bridge
+
+volumes:
+  odoo18-web-data:
+  odoo18-db-data:
+
+x-casaos:
+  architectures:
+    - amd64
+  main: odoo
+  author: Payrillium
+  category: Payrillium
+  title:
+    en_us: Odoo 18 Community
+  description:
+    en_us: "Odoo 18 Community ERP running on PostgreSQL."
+  icon: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/odoo18.png
+  thumbnail: https://raw.githubusercontent.com/Payrillium/payrillium-store/main/odoo18.png
+  tagline:
+    en_us: "Business apps & ERP for your PayrilliumOS."
+  index: /
+  scheme: http
+  port_map: "8069"
