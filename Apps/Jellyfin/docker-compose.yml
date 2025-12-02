@@ -1,0 +1,103 @@
+services:
+  jellyfin:
+    image: linuxserver/jellyfin:10.10.7
+    container_name: jellyfin
+    hostname: jellyfin
+    restart: unless-stopped
+    network_mode: bridge
+
+    deploy:
+      resources:
+        reservations:
+          memory: "268435456"
+        limits:
+          memory: 11643M
+
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/vcsm:/dev/vcsm
+      - /dev/vchiq:/dev/vchiq
+      - /dev/video10:/dev/video10
+      - /dev/video11:/dev/video11
+      - /dev/video12:/dev/video12
+
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=America/New_York
+
+    ports:
+      - "8097:8096"
+      - "8921:8920"
+      # Auto-discovery
+      - "7359:7359"
+      # DLNA
+      - "1901:1900"
+
+    volumes:
+      - /DATA/AppData/$AppID/jellyfin/config:/config
+      - /DATA/Media:/Media
+      - /opt/vc/lib:/opt/vc/lib
+
+    cap_add: []
+    command: []
+
+    x-casaos:
+      envs:
+        - container: TZ
+          description:
+            en_us: "Time Zone"
+        - container: PUID
+          description:
+            en_us: "Run Jellyfin as specified uid."
+        - container: PGID
+          description:
+            en_us: "Run Jellyfin as specified gid."
+        - container: JELLYFIN_PublishedServerUrl
+          description:
+            en_us: "Autodiscovery response domain or IP address."
+
+      ports:
+        - container: "8096"
+          description:
+            en_us: "WebUI HTTP Port"
+        - container: "8920"
+          description:
+            en_us: "WebUI HTTPS Port"
+        - container: "7359"
+          description:
+            en_us: "Jellyfin auto-discovery Port"
+        - container: "1900"
+          description:
+            en_us: "Jellyfin DLNA Port"
+
+      volumes:
+        - container: /config
+          description:
+            en_us: "Jellyfin config directory."
+        - container: /Media
+          description:
+            en_us: "Jellyfin media library directory."
+        - container: /opt/vc/lib
+          description:
+            en_us: "OpenMax libs (for HW acceleration)."
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: jellyfin
+  author: Payrillium
+  category: Payrillium
+  developer: Jellyfin
+  title:
+    en_us: "Jellyfin"
+  description:
+    en_us: "Fully open-source, free, and privacy-focused media server for your PayrilliumOS."
+  tagline:
+    en_us: "The personal media system for your home."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Jellyfin/jellyfin.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Jellyfin/jellyfin.png"
+  index: /
+  scheme: http
+  port_map: "8097"
