@@ -1,0 +1,72 @@
+version: "3.8"
+
+name: budibase
+
+services:
+  budibase:
+    image: budibase/budibase:latest
+    container_name: budibase
+    restart: unless-stopped
+    ports:
+      - "8310:80"
+    environment:
+      # Cambia estos valores por secretos reales
+      - JWT_SECRET=CHANGE_ME_JWT_SECRET
+      - MINIO_ACCESS_KEY=CHANGE_ME_MINIO_ACCESS
+      - MINIO_SECRET_KEY=CHANGE_ME_MINIO_SECRET
+      - REDIS_PASSWORD=CHANGE_ME_REDIS_PASSWORD
+      - COUCHDB_USER=budibase
+      - COUCHDB_PASSWORD=CHANGE_ME_COUCHDB_PASSWORD
+      - INTERNAL_API_KEY=CHANGE_ME_INTERNAL_API_KEY
+    volumes:
+      - /DATA/AppData/$AppID/budibase/data:/data
+    x-casaos:
+      envs:
+        - container: JWT_SECRET
+          description:
+            en_us: "JWT secret (must be random)"
+        - container: MINIO_ACCESS_KEY
+          description:
+            en_us: "MinIO access key"
+        - container: MINIO_SECRET_KEY
+          description:
+            en_us: "MinIO secret key"
+        - container: REDIS_PASSWORD
+          description:
+            en_us: "Redis password"
+        - container: COUCHDB_USER
+          description:
+            en_us: "CouchDB user"
+        - container: COUCHDB_PASSWORD
+          description:
+            en_us: "CouchDB password"
+        - container: INTERNAL_API_KEY
+          description:
+            en_us: "Internal API key"
+      ports:
+        - container: "80"
+          description:
+            en_us: "Web interface"
+      volumes:
+        - container: /data
+          description:
+            en_us: "Budibase data directory"
+
+x-casaos:
+  architectures:
+    - amd64
+  main: budibase
+  author: Payrillium
+  category: Payrillium
+  developer: Budibase
+  title:
+    en_us: "Budibase"
+  description:
+    en_us: "Open source low-code platform to build internal tools."
+  tagline:
+    en_us: "Build internal tools in minutes."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Budibase/icon.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Budibase/screenshot-1.png"
+  index: /
+  scheme: http
+  port_map: "8310"
