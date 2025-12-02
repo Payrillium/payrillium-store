@@ -1,0 +1,50 @@
+version: "3.8"
+
+name: baserow
+
+services:
+  baserow:
+    container_name: baserow
+    image: baserow/baserow:2.0.2
+    environment:
+      # Pon aquí la URL real (dominio o IP+puerto)
+      - BASEROW_PUBLIC_URL=http://localhost:8290
+    ports:
+      - "8290:80"
+      # si quieres exponer HTTPS del contenedor también:
+      # - "8291:443"
+    volumes:
+      - /DATA/AppData/$AppID/baserow/data:/baserow/data
+    restart: unless-stopped
+    x-casaos:
+      envs:
+        - container: BASEROW_PUBLIC_URL
+          description:
+            en_us: "Public URL used inside Baserow"
+      ports:
+        - container: "80"
+          description:
+            en_us: "Web interface"
+      volumes:
+        - container: /baserow/data
+          description:
+            en_us: "Baserow data directory"
+
+x-casaos:
+  architectures:
+    - amd64
+  main: baserow
+  author: Payrillium
+  category: Payrillium
+  developer: Baserow
+  title:
+    en_us: "Baserow"
+  description:
+    en_us: "Open source no-code database and Airtable alternative."
+  tagline:
+    en_us: "Build databases and apps visually."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Baserow/icon.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Baserow/screenshot-1.png"
+  index: /
+  scheme: http
+  port_map: "8290"
