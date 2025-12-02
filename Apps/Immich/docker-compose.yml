@@ -1,0 +1,126 @@
+services:
+  immich-server:
+    container_name: immich-server
+    image: ghcr.io/immich-app/immich-server:v2.3.1
+    ports:
+      - "2283:2283"
+    volumes:
+      - /DATA/AppData/$AppID/immich/upload:/usr/src/app/upload
+    environment:
+      DB_HOSTNAME: immich-postgres
+      DB_USERNAME: casaos
+      DB_PASSWORD: casaos
+      DB_DATABASE_NAME: immich
+      DB_PORT: "5432"
+      REDIS_HOSTNAME: immich-redis
+      IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+    networks:
+      - immich-network
+
+    x-casaos:
+      envs:
+        - container: DB_HOSTNAME
+          description:
+            en_us: "Database hostname"
+        - container: DB_USERNAME
+          description:
+            en_us: "Database username"
+        - container: DB_PASSWORD
+          description:
+            en_us: "Database password"
+        - container: DB_DATABASE_NAME
+          description:
+            en_us: "Database name"
+        - container: DB_PORT
+          description:
+            en_us: "Database port"
+        - container: REDIS_HOSTNAME
+          description:
+            en_us: "Redis hostname"
+        - container: IMMICH_MACHINE_LEARNING_URL
+          description:
+            en_us: "Immich Machine Learning service URL"
+      ports:
+        - container: "2283"
+          description:
+            en_us: "Immich web interface (HTTP)"
+      volumes:
+        - container: /usr/src/app/upload
+          description:
+            en_us: "Photo and video upload directory"
+
+  immich-machine-learning:
+    container_name: immich-machine-learning
+    image: ghcr.io/immich-app/immich-machine-learning:v2.3.1
+    volumes:
+      - /DATA/AppData/$AppID/immich/model-cache:/cache
+    environment:
+      DB_HOSTNAME: immich-postgres
+      DB_USERNAME: casaos
+      DB_PASSWORD: casaos
+      DB_DATABASE_NAME: casaos
+      DB_PORT: 5432
+      REDIS_HOSTNAME: immich-redis
+    restart: unless-stopped
+    networks:
+      - immich-network
+    x-casaos:
+      volumes:
+        - container: /cache
+          description:
+            en_us: "Model cache for machine learning"
+
+  redis:
+    container_name: immich-redis
+    image: redis:6.2.20-alpine@sha256:2185e741f4c1e7b0ea9ca1e163a3767c4270a73086b6bbea2049a7203212fb7f
+    restart: always
+    networks:
+      - immich-network
+
+  database:
+    container_name: immich-postgres
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+    environment:
+      POSTGRES_PASSWORD: casaos
+      POSTGRES_USER: casaos
+      POSTGRES_DB: immich
+      PG_DATA: /var/lib/postgresql/data
+      # DB_STORAGE_TYPE: 'HDD'  # Uncomment if DB is on HDD
+    volumes:
+      - /DATA/AppData/$AppID/immich/pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - immich-network
+    x-casaos:
+      volumes:
+        - container: /var/lib/postgresql/data
+          description:
+            en_us: "PostgreSQL data directory"
+
+networks:
+  immich-network:
+    driver: bridge
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: immich-server
+  author: Payrillium
+  category: Payrillium
+  developer: immich-app
+  title:
+    en_us: "Immich"
+  description:
+    en_us: "Self-hosted photo and video backup solution for your devices."
+  tagline:
+    en_us: "Automatic photo and video backup on PayrilliumOS."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Immich/immich.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Immich/immich.png"
+  index: /
+  scheme: http
+  port_map: "2283"
