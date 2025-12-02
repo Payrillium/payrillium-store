@@ -1,0 +1,39 @@
+services:
+  myspeed:
+    image: germannewsmaker/myspeed:1.0.9
+    container_name: myspeed
+    restart: unless-stopped
+    ports:
+      - "5216:5216"
+    volumes:
+      - /DATA/AppData/$AppID/myspeed/data:/myspeed/data
+
+    x-casaos:
+      ports:
+        - container: "5216"
+          description:
+            en_us: "MySpeed web interface (HTTP)"
+      volumes:
+        - container: /myspeed/data
+          description:
+            en_us: "MySpeed data directory (history and config)"
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: myspeed
+  author: Payrillium
+  category: Payrillium
+  developer: gnmyt
+  title:
+    en_us: "MySpeed"
+  description:
+    en_us: "Speed test analysis software that records your internet speed history for up to 30 days."
+  tagline:
+    en_us: "Monitor your internet speed over time on PayrilliumOS."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MySpeed/logo.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/MySpeed/logo.png"
+  index: /
+  scheme: http
+  port_map: "5216"
