@@ -1,0 +1,94 @@
+version: "3.8"
+
+name: bookstack
+
+services:
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:latest
+    container_name: bookstack
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - DB_HOST=bookstack-db
+      - DB_USER=bookstack
+      - DB_PASS=bookstack_pass
+      - DB_DATABASE=bookstack_app
+    volumes:
+      - /DATA/AppData/$AppID/bookstack/config:/config
+    ports:
+      - "8280:80"
+    depends_on:
+      - bookstack-db
+    restart: unless-stopped
+    x-casaos:
+      envs:
+        - container: DB_HOST
+          description:
+            en_us: "Database host"
+        - container: DB_USER
+          description:
+            en_us: "Database user"
+        - container: DB_PASS
+          description:
+            en_us: "Database password"
+        - container: DB_DATABASE
+          description:
+            en_us: "Database name"
+      ports:
+        - container: "80"
+          description:
+            en_us: "Web interface"
+      volumes:
+        - container: /config
+          description:
+            en_us: "BookStack configuration and data"
+
+  bookstack-db:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: bookstack-db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - MYSQL_ROOT_PASSWORD=bookstack_root_pass
+      - MYSQL_DATABASE=bookstack_app
+      - MYSQL_USER=bookstack
+      - MYSQL_PASSWORD=bookstack_pass
+    volumes:
+      - /DATA/AppData/$AppID/bookstack/db:/config
+    restart: unless-stopped
+    x-casaos:
+      envs:
+        - container: MYSQL_DATABASE
+          description:
+            en_us: "Database name"
+        - container: MYSQL_USER
+          description:
+            en_us: "Database user"
+        - container: MYSQL_PASSWORD
+          description:
+            en_us: "Database password"
+      volumes:
+        - container: /config
+          description:
+            en_us: "MariaDB configuration and data"
+
+x-casaos:
+  architectures:
+    - amd64
+  main: bookstack
+  author: Payrillium
+  category: Payrillium
+  developer: BookStack
+  title:
+    en_us: "BookStack"
+  description:
+    en_us: "Self-hosted documentation and wiki platform."
+  tagline:
+    en_us: "Manage all your docs in one place."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Bookstack/icon.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Bookstack/screenshot-1.png"
+  index: /
+  scheme: http
+  port_map: "8280"
