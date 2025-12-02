@@ -1,0 +1,99 @@
+services:
+  nocodb:
+    image: nocodb/nocodb:0.265.1
+    container_name: nocodb
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgres://nocodb:nocodb@nocodb-db:5432/nocodb
+      - NC_AUTH_JWT_SECRET=899499fc-36a0-4131-b077-7bb9f051ac9b
+      - NC_REDIS_URL=redis://default:casaos@nocodb-redis:6379
+    ports:
+      - "8080:8080"
+    volumes:
+      - /DATA/AppData/$AppID/nocodb/data:/usr/src/app/data
+    networks:
+      - nocodb-network
+
+    x-casaos:
+      envs:
+        - container: DATABASE_URL
+          description:
+            en_us: "PostgreSQL connection string"
+        - container: NC_AUTH_JWT_SECRET
+          description:
+            en_us: "JWT secret used for authentication"
+        - container: NC_REDIS_URL
+          description:
+            en_us: "Redis connection URL"
+      ports:
+        - container: "8080"
+          description:
+            en_us: "NocoDB web interface (HTTP)"
+      volumes:
+        - container: /usr/src/app/data
+          description:
+            en_us: "NocoDB data directory"
+
+  nocodb-db:
+    container_name: nocodb-db
+    image: postgres:13
+    restart: always
+    environment:
+      - POSTGRES_DB=nocodb
+      - POSTGRES_USER=nocodb
+      - POSTGRES_PASSWORD=nocodb
+    volumes:
+      - /DATA/AppData/$AppID/nocodb/pgdata:/var/lib/postgresql/data
+    networks:
+      - nocodb-network
+
+    x-casaos:
+      volumes:
+        - container: /var/lib/postgresql/data
+          description:
+            en_us: "PostgreSQL data directory"
+
+  nocodb-redis:
+    image: redis:8.2.2-alpine@sha256:1c78f5e7512cc8b22b0edc95c20e7abd9e1fd832e5dfd5c3c6b59ce82fb238d0
+    container_name: nocodb-redis
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "casaos"]
+    volumes:
+      - /DATA/AppData/$AppID/nocodb/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    networks:
+      - nocodb-network
+
+    x-casaos:
+      volumes:
+        - container: /data
+          description:
+            en_us: "Redis data directory"
+
+networks:
+  nocodb-network:
+    driver: bridge
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: nocodb
+  author: Payrillium
+  category: Payrillium
+  developer: nocodb
+  title:
+    en_us: "NocoDB"
+  description:
+    en_us: "Open source Airtable alternative to build no-code database solutions with a spreadsheet-like interface."
+  tagline:
+    en_us: "🔥 Open Source Airtable Alternative for your PayrilliumOS."
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/NocoDB/nocodb.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/NocoDB/nocodb.png"
+  index: /
+  scheme: http
+  port_map: "8080"
