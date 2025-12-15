@@ -5,7 +5,7 @@ name: payrillium-admin-console
 services:
   pac:
     container_name: pac
-    image: payrillium/payrillium-admin-console:1.0.4
+    image: payrillium/payrillium-admin-console:1.0.5
     ports:
       - "4000:4000"
     environment:
@@ -49,8 +49,8 @@ x-casaos:
     en_us: "Central management console for Payrillium OS: users, devices and PayOS services."
   tagline:
     en_us: "Control your Payrillium services from a single unified console."
-  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/icon.png"
-  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/screenshot-1.png"
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/pac.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/pac.png"
   index: /
   scheme: http
   port_map: "4000"
