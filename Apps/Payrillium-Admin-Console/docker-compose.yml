@@ -5,17 +5,17 @@ name: payrillium-admin-console
 services:
   pac:
     container_name: pac
-    image: payrillium/payrillium-admin-console:1.0.2
+    image: payrillium/payrillium-admin-console:1.0.3
     ports:
       - "4000:4000"
     environment:
       NODE_ENV: production
-      PayOS_DB_PATH: /app/database/user.db
+      PayOS_DB_PATH: /var/lib/casaos/db/user.db
       Shopnet_API_URL: "${Shopnet_API_URL:-}"
       BUSINESS_TOKEN: "${BUSINESS_TOKEN:-}"
       BUSINESS_CODE: "${BUSINESS_CODE:-}"
     volumes:
-      - /DATA/AppData/$AppID/pac/database:/app/database
+      - /var/lib/casaos/db:/var/lib/casaos/db:rw
     restart: unless-stopped
     x-casaos:
       envs:
@@ -33,9 +33,9 @@ services:
           description:
             en_us: "Payrillium Admin Console web interface (HTTP)"
       volumes:
-        - container: /app/database
+        - container: /var/lib/casaos/db
           description:
-            en_us: "SQLite database for users and settings"
+            en_us: "CasaOS database directory (read-write access to user.db)"
 
 x-casaos:
   architectures:
@@ -49,8 +49,8 @@ x-casaos:
     en_us: "Central management console for Payrillium OS: users, devices and PayOS services."
   tagline:
     en_us: "Control your Payrillium services from a single unified console."
-  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/pac.png"
-  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/pac.png"
+  icon: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/icon.png"
+  thumbnail: "https://raw.githubusercontent.com/Payrillium/payrillium-store/main/Apps/Payrillium-Admin-Console/screenshot-1.png"
   index: /
   scheme: http
   port_map: "4000"
