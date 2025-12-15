@@ -5,7 +5,7 @@ name: payrillium-admin-console
 services:
   pac:
     container_name: pac
-    image: payrillium/payrillium-admin-console:1.0.0
+    image: payrillium/payrillium-admin-console:1.0.1
     ports:
       - "4000:4000"
     environment:
